@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LePet - Finalizar Cadastro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+      padding: 40px;
+      max-width: 480px;
+      width: 100%;
+      margin: 20px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo h1 {
+      font-size: 28px;
+      color: #4A90D9;
+      font-weight: 700;
+    }
+
+    .logo p {
+      color: #888;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #444;
+    }
+
+    select, input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #4A90D9;
+      box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #4A90D9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      background: #357ABD;
+    }
+
+    .btn:disabled {
+      background: #B0C4DE;
+      cursor: not-allowed;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .alert-error {
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1px solid #FECACA;
+    }
+
+    .alert-success {
+      background: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+    }
+
+    .user-info {
+      background: #F0F4FF;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .user-info span {
+      font-weight: 600;
+    }
+
+    .crmv-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .crmv-row .form-group {
+      flex: 1;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <h1>LePet</h1>
+      <p>Plataforma para cuidado animal</p>
+    </div>
+
+    <div id="message"></div>
+
+    <div id="onboarding-form">
+      <h2>Finalizar Cadastro</h2>
+      <p class="subtitle">Complete suas informacoes para comecar a usar a plataforma.</p>
+
+      <div id="user-info" class="user-info hidden">
+        Logado como: <span id="user-name"></span> (<span id="user-email"></span>)
+      </div>
+
+      <form id="form" novalidate>
+        <div class="form-group">
+          <label for="role">Tipo de conta *</label>
+          <select id="role" required>
+            <option value="">Selecione...</option>
+            <option value="TUTOR">Tutor (dono de pet)</option>
+            <option value="COMPANY">Empresa (clinica, petshop)</option>
+            <option value="PROFESSIONAL">Profissional</option>
+          </select>
+        </div>
+
+        <div id="specialty-section" class="form-group hidden">
+          <label for="specialtyType">Especialidade *</label>
+          <select id="specialtyType">
+            <option value="">Selecione...</option>
+            <option value="VETERINARIAN">Veterinario(a)</option>
+            <option value="GROOMER">Tosador(a)</option>
+            <option value="BATHER">Banhista</option>
+            <option value="TRAINER">Adestrador(a)</option>
+            <option value="OTHER">Outro</option>
+          </select>
+        </div>
+
+        <div id="crmv-section" class="hidden">
+          <div class="crmv-row">
+            <div class="form-group">
+              <label for="crmvNumber">Numero CRMV *</label>
+              <input type="text" id="crmvNumber" placeholder="12345">
+            </div>
+            <div class="form-group">
+              <label for="crmvState">Estado (UF) *</label>
+              <select id="crmvState">
+                <option value="">UF</option>
+                <option value="AC">AC</option>
+                <option value="AL">AL</option>
+                <option value="AP">AP</option>
+                <option value="AM">AM</option>
+                <option value="BA">BA</option>
+                <option value="CE">CE</option>
+                <option value="DF">DF</option>
+                <option value="ES">ES</option>
+                <option value="GO">GO</option>
+                <option value="MA">MA</option>
+                <option value="MT">MT</option>
+                <option value="MS">MS</option>
+                <option value="MG">MG</option>
+                <option value="PA">PA</option>
+                <option value="PB">PB</option>
+                <option value="PR">PR</option>
+                <option value="PE">PE</option>
+                <option value="PI">PI</option>
+                <option value="RJ">RJ</option>
+                <option value="RN">RN</option>
+                <option value="RS">RS</option>
+                <option value="RO">RO</option>
+                <option value="RR">RR</option>
+                <option value="SC">SC</option>
+                <option value="SP">SP</option>
+                <option value="SE">SE</option>
+                <option value="TO">TO</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Telefone</label>
+          <input type="tel" id="phone" placeholder="(11) 99999-9999">
+        </div>
+
+        <button type="submit" class="btn" id="submit-btn">Finalizar Cadastro</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var token = params.get('token');
+      var refreshToken = params.get('refreshToken');
+
+      if (!token) {
+        showMessage('Token de autenticacao nao encontrado. Faca login novamente.', 'error');
+        document.getElementById('onboarding-form').classList.add('hidden');
+        return;
+      }
+
+      // Decodifica payload do JWT para exibir dados do usuario
+      try {
+        var payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.sub) {
+          fetchUserInfo(token);
+        }
+      } catch (e) {
+        // Falha ao decodificar token - segue sem exibir info
+      }
+
+      var roleSelect = document.getElementById('role');
+      var specialtySection = document.getElementById('specialty-section');
+      var specialtySelect = document.getElementById('specialtyType');
+      var crmvSection = document.getElementById('crmv-section');
+
+      roleSelect.addEventListener('change', function () {
+        var isProfessional = this.value === 'PROFESSIONAL';
+        specialtySection.classList.toggle('hidden', !isProfessional);
+        crmvSection.classList.add('hidden');
+
+        if (!isProfessional) {
+          specialtySelect.value = '';
+        }
+      });
+
+      specialtySelect.addEventListener('change', function () {
+        var isVet = this.value === 'VETERINARIAN';
+        crmvSection.classList.toggle('hidden', !isVet);
+      });
+
+      document.getElementById('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        submitOnboarding(token);
+      });
+
+      function fetchUserInfo(authToken) {
+        // Decodifica informacao basica do token
+        // O endpoint de onboarding retornara os dados completos
+        var userInfoEl = document.getElementById('user-info');
+        userInfoEl.classList.remove('hidden');
+        document.getElementById('user-name').textContent = 'Carregando...';
+        document.getElementById('user-email').textContent = '';
+
+        // Tenta obter dados do usuario via refresh-token para exibir nome/email
+        // Por simplicidade, usa o JWT payload se disponivel
+        try {
+          var payload = JSON.parse(atob(authToken.split('.')[1]));
+          document.getElementById('user-name').textContent = payload.name || payload.sub || '';
+          document.getElementById('user-email').textContent = payload.email || '';
+          if (!payload.name && !payload.email) {
+            userInfoEl.classList.add('hidden');
+          }
+        } catch (e) {
+          userInfoEl.classList.add('hidden');
+        }
+      }
+
+      function submitOnboarding(authToken) {
+        var submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span>Enviando...';
+
+        var role = document.getElementById('role').value;
+        if (!role) {
+          showMessage('Selecione o tipo de conta.', 'error');
+          resetButton();
+          return;
+        }
+
+        var body = { role: role };
+
+        var phone = document.getElementById('phone').value.trim();
+        if (phone) {
+          body.phone = phone;
+        }
+
+        if (role === 'PROFESSIONAL') {
+          var specialtyType = document.getElementById('specialtyType').value;
+          if (!specialtyType) {
+            showMessage('Selecione a especialidade.', 'error');
+            resetButton();
+            return;
+          }
+          body.specialtyType = specialtyType;
+
+          if (specialtyType === 'VETERINARIAN') {
+            var crmvNumber = document.getElementById('crmvNumber').value.trim();
+            var crmvState = document.getElementById('crmvState').value;
+
+            if (!crmvNumber || !crmvState) {
+              showMessage('Preencha o numero e estado do CRMV.', 'error');
+              resetButton();
+              return;
+            }
+            body.crmvNumber = crmvNumber;
+            body.crmvState = crmvState;
+          }
+        }
+
+        fetch('/api/v1/auth/onboarding', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + authToken,
+          },
+          body: JSON.stringify(body),
+        })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              return { status: res.status, data: data };
+            });
+          })
+          .then(function (result) {
+            if (result.status >= 400) {
+              showMessage(result.data.message || 'Erro ao finalizar cadastro.', 'error');
+              resetButton();
+              return;
+            }
+
+            showMessage('Cadastro finalizado com sucesso! Voce ja pode usar o aplicativo.', 'success');
+            document.getElementById('form').classList.add('hidden');
+          })
+          .catch(function () {
+            showMessage('Erro de conexao. Tente novamente.', 'error');
+            resetButton();
+          });
+      }
+
+      function resetButton() {
+        var submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Finalizar Cadastro';
+      }
+
+      function showMessage(text, type) {
+        var el = document.getElementById('message');
+        el.className = 'alert alert-' + type;
+        el.textContent = text;
+      }
+    })();
+  </script>
+</body>
+</html>
