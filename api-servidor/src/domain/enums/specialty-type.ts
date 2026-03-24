@@ -1,0 +1,7 @@
+export enum SpecialtyType {
+  VETERINARIAN = 'VETERINARIAN',
+  GROOMER = 'GROOMER',
+  BATHER = 'BATHER',
+  TRAINER = 'TRAINER',
+  OTHER = 'OTHER',
+}
