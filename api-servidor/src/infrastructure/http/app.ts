@@ -43,6 +43,9 @@ export class App {
   }
 
   private setupRoutes(): void {
+    // Servir arquivos de upload (dev local)
+    this.app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
+
     this.app.get('/', (_req, res) => {
       res.redirect('/login');
     });

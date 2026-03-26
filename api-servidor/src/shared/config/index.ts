@@ -34,4 +34,12 @@ export const config = {
     user: process.env.DOCS_USER || 'admin',
     password: process.env.DOCS_PASSWORD || 'admin',
   },
+  upload: {
+    baseUrl: process.env.UPLOAD_BASE_URL || '',
+    storageProvider: process.env.STORAGE_PROVIDER || 'local',
+    s3Bucket: process.env.AWS_S3_BUCKET || '',
+    s3Region: process.env.AWS_S3_REGION || 'us-east-1',
+    s3AccessKeyId: process.env.AWS_S3_ACCESS_KEY_ID || '',
+    s3SecretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY || '',
+  },
 };

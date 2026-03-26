@@ -9,7 +9,7 @@ export async function startServer(): Promise<void> {
   try {
     await sequelize.authenticate();
     logger.info('Database connection established');
-    await sequelize.sync({alter: false});
+    await sequelize.sync({alter: true});
     logger.info('Database models synchronized');
   } catch (error) {
     logger.warn('Database unavailable - server starting without DB', error);
