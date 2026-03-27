@@ -19,6 +19,7 @@ export class App {
   }
 
   private setupMiddlewares(): void {
+    this.app.set('trust proxy', 1);
     this.app.use(cors());
 
     // Stripe webhook precisa do raw body para validacao de assinatura
