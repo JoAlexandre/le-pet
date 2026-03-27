@@ -1,4 +1,7 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+const apiPrefix = process.env.API_PREFIX || '/api/v1';
+const corsOrigin = process.env.CORS_ORIGIN || ''; 
+const serverPort = process.env.PORT || '3000'; 
 
 const swaggerOptions: swaggerJsdoc.Options = {
   definition: {
@@ -9,9 +12,15 @@ const swaggerOptions: swaggerJsdoc.Options = {
       description: 'API for managing pet care services, professionals, and tutors',
     },
     servers: [
+      process.env.NODE_ENV == 'production'
+      ?
       {
-        url: '/api/v1',
-        description: 'API v1',
+        url: `${corsOrigin}${apiPrefix}`,
+        description: 'Servidor de Desenvolvimento',
+      }: 
+      {
+        url: `http://localhost:${serverPort}${apiPrefix}`,
+        description: 'Servidor de Desenvolvimento',
       },
     ],
     components: {
