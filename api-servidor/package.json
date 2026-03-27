@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "prod": "NODE_ENV=production nodemon",
-    "build": "tsc",
+    "build": "tsc && cp -r src/infrastructure/http/views dist/infrastructure/http/views",
     "start": "node dist/main.js",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
