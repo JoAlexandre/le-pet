@@ -1,0 +1,64 @@
+name: Deploy API Servidor to Digital Ocean
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'api-servidor/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./api-servidor
+        run: npm ci
+
+      - name: Run linter
+        working-directory: ./api-servidor
+        run: npm run lint
+
+      # - name: Run tests
+      #   working-directory: ./api-servidor
+      #   run: npm test
+
+      # - name: Build TypeScript
+      #   working-directory: ./api-servidor
+      #   run: npm run build
+
+      - name: Deploy to Digital Ocean
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/le-pet/api-servidor || cd /root/le-pet/api-servidor || cd /home/*/le-pet/api-servidor
+            git stash
+            git pull origin main
+            npm install
+            npm run build
+            pm2 reload ecosystem.config.js --update-env
+            pm2 save
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            pm2 status
+            sleep 5
+            curl -f http://localhost:8083/api/v1/health || exit 1
