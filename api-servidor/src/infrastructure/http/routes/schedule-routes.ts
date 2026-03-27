@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { scheduleController } from '../dependencies';
+import { scheduleController, quotaService } from '../dependencies';
 import { authMiddleware } from '../middlewares/auth-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
+import { requireFeature } from '../middlewares/require-feature-middleware';
 
 const scheduleRouter = Router();
 
@@ -104,6 +105,7 @@ scheduleRouter.post(
   '/schedules',
   authMiddleware,
   roleMiddleware('COMPANY', 'PROFESSIONAL'),
+  requireFeature(quotaService, 'canExposeSchedule'),
   (req, res, next) => scheduleController.create(req, res, next),
 );
 
@@ -284,6 +286,7 @@ scheduleRouter.put(
   '/schedules/:id',
   authMiddleware,
   roleMiddleware('COMPANY', 'PROFESSIONAL'),
+  requireFeature(quotaService, 'canExposeSchedule'),
   (req, res, next) => scheduleController.update(req, res, next),
 );
 
@@ -320,6 +323,7 @@ scheduleRouter.delete(
   '/schedules/:id',
   authMiddleware,
   roleMiddleware('COMPANY', 'PROFESSIONAL'),
+  requireFeature(quotaService, 'canExposeSchedule'),
   (req, res, next) => scheduleController.delete(req, res, next),
 );
 

@@ -50,6 +50,7 @@ export class ProductController {
     try {
       const result = await this.createProductUseCase.execute(
         req.user!.sub,
+        req.user!.role!,
         req.body as CreateProductDto,
       );
       res.status(201).json(result);

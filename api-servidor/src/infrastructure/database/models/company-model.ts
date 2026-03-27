@@ -52,7 +52,7 @@ CompanyModel.init(
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
-      unique: true,
+      unique: 'companies_user_id_unique',
       field: 'user_id',
       references: {
         model: 'users',
@@ -72,7 +72,7 @@ CompanyModel.init(
     cnpj: {
       type: DataTypes.STRING(14),
       allowNull: true,
-      unique: true,
+      unique: 'companies_cnpj_unique',
     },
     phone: {
       type: DataTypes.STRING(20),

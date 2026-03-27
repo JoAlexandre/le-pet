@@ -20,7 +20,16 @@ export class App {
 
   private setupMiddlewares(): void {
     this.app.use(cors());
-    this.app.use(express.json());
+
+    // Stripe webhook precisa do raw body para validacao de assinatura
+    const apiPrefix = process.env.API_PREFIX || '/api/v1';
+    this.app.use((req, res, next) => {
+      if (req.originalUrl === `${apiPrefix}/webhooks/stripe`) {
+        next();
+      } else {
+        express.json()(req, res, next);
+      }
+    });
 
     this.app.use((req: Request, _res: Response, next: NextFunction) => {
       logger.info(`${req.method} ${req.originalUrl}`);

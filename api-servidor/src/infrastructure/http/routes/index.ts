@@ -10,6 +10,11 @@ import { productRouter } from './product-routes';
 import { scheduleRouter } from './schedule-routes';
 import { appointmentRouter } from './appointment-routes';
 import { lostAnimalRouter } from './lost-animal-routes';
+import { petinderRouter } from './petinder-routes';
+import { medicalRecordRouter } from './medical-record-routes';
+import { planRouter } from './plan-routes';
+import { subscriptionRouter } from './subscription-routes';
+import { stripeWebhookRouter } from './stripe-webhook-routes';
 import { webRouter } from './web-routes';
 import { docsRouter } from './docs-routes';
 import { lgpdLogRouter } from './lgpd-log-routes';
@@ -32,6 +37,11 @@ router.use(apiPrefix, productRouter);
 router.use(apiPrefix, scheduleRouter);
 router.use(apiPrefix, appointmentRouter);
 router.use(apiPrefix, lostAnimalRouter);
+router.use(apiPrefix, petinderRouter);
+router.use(apiPrefix, medicalRecordRouter);
+router.use(apiPrefix, planRouter);
+router.use(apiPrefix, subscriptionRouter);
+router.use(apiPrefix, stripeWebhookRouter);
 router.use(apiPrefix, lgpdLogRouter);
 
 // Documentacao

@@ -42,4 +42,9 @@ export const config = {
     s3AccessKeyId: process.env.AWS_S3_ACCESS_KEY_ID || '',
     s3SecretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY || '',
   },
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY || '',
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+  },
 };

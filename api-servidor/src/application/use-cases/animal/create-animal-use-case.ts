@@ -2,17 +2,24 @@ import { AnimalRepository } from '../../../domain/repositories/animal-repository
 import { Animal } from '../../../domain/entities/animal';
 import { AnimalSpecies } from '../../../domain/enums/animal-species';
 import { AnimalGender } from '../../../domain/enums/animal-gender';
+import { Role } from '../../../domain/enums/role';
 import { CreateAnimalDto } from '../../dtos/create-animal-dto';
 import { AnimalResponseDto } from '../../dtos/animal-response-dto';
 import { AnimalMapper } from '../../../infrastructure/http/mappers/animal-mapper';
 import { DomainError } from '../../../shared/errors';
-
-const MAX_ANIMALS_PER_TUTOR = 50;
+import { QuotaService } from '../../../domain/services/quota-service';
 
 export class CreateAnimalUseCase {
-  constructor(private animalRepository: AnimalRepository) {}
+  constructor(
+    private animalRepository: AnimalRepository,
+    private quotaService: QuotaService,
+  ) {}
 
-  async execute(tutorId: string, dto: CreateAnimalDto): Promise<AnimalResponseDto> {
+  async execute(
+    tutorId: string,
+    userRole: string,
+    dto: CreateAnimalDto,
+  ): Promise<AnimalResponseDto> {
     if (!Object.values(AnimalSpecies).includes(dto.species as AnimalSpecies)) {
       throw new DomainError(
         `Invalid species. Must be one of: ${Object.values(AnimalSpecies).join(', ')}`,
@@ -27,11 +34,9 @@ export class CreateAnimalUseCase {
       );
     }
 
-    // Validacao basica de limite de animais no MVP
+    // Verificacao de quota de animais pelo plano do usuario
     const currentCount = await this.animalRepository.countByTutorId(tutorId);
-    if (currentCount >= MAX_ANIMALS_PER_TUTOR) {
-      throw new DomainError('Animal limit exceeded for your current plan', 403);
-    }
+    await this.quotaService.checkQuota(tutorId, userRole as Role, 'maxAnimals', currentCount);
 
     let parsedBirthDate: Date | null = null;
     if (dto.birthDate) {

@@ -21,6 +21,7 @@ export class AnimalController {
     try {
       const result = await this.createAnimalUseCase.execute(
         req.user!.sub,
+        req.user!.role!,
         req.body as CreateAnimalDto,
       );
       res.status(201).json(result);

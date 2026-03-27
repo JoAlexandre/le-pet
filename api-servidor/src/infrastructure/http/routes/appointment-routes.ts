@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { appointmentController } from '../dependencies';
+import { appointmentController, quotaService } from '../dependencies';
 import { authMiddleware } from '../middlewares/auth-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
+import { requireFeature } from '../middlewares/require-feature-middleware';
 
 const appointmentRouter = Router();
 
@@ -155,6 +156,7 @@ appointmentRouter.post(
   '/appointments',
   authMiddleware,
   roleMiddleware('TUTOR'),
+  requireFeature(quotaService, 'canUseOnlineAppointments'),
   (req, res, next) => appointmentController.create(req, res, next),
 );
 
