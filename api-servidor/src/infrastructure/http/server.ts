@@ -3,13 +3,12 @@ import { config } from '../../shared/config';
 import { logger } from '../../shared/logger';
 import { sequelize } from '../database/config/connection';
 import '../database/models';
-import { SyncOptions } from 'sequelize';
 
 export async function startServer(): Promise<void> {
   try {
     await sequelize.authenticate();
     logger.info('Database connection established');
-    await sequelize.sync({alter: true});
+    await sequelize.sync({ alter: false });
     logger.info('Database models synchronized');
   } catch (error) {
     logger.warn('Database unavailable - server starting without DB', error);

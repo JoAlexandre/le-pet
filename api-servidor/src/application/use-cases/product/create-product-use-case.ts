@@ -6,23 +6,34 @@ import { ProductSize } from '../../../domain/entities/product-size';
 import { ProductCategory } from '../../../domain/enums/product-category';
 import { ProductType } from '../../../domain/enums/product-type';
 import { SizeType } from '../../../domain/enums/size-type';
+import { Role } from '../../../domain/enums/role';
 import { CreateProductDto } from '../../dtos/create-product-dto';
 import { ProductResponseDto } from '../../dtos/product-response-dto';
 import { ProductMapper } from '../../../infrastructure/http/mappers/product-mapper';
 import { DomainError } from '../../../shared/errors';
+import { QuotaService } from '../../../domain/services/quota-service';
 
 export class CreateProductUseCase {
   constructor(
     private productRepository: ProductRepository,
     private productSizeRepository: ProductSizeRepository,
     private companyRepository: CompanyRepository,
+    private quotaService: QuotaService,
   ) {}
 
-  async execute(userId: string, dto: CreateProductDto): Promise<ProductResponseDto> {
+  async execute(
+    userId: string,
+    userRole: string,
+    dto: CreateProductDto,
+  ): Promise<ProductResponseDto> {
     const company = await this.companyRepository.findByUserId(userId);
     if (!company) {
       throw new DomainError('Company not found for this user', 404);
     }
+
+    // Verificacao de quota de produtos pelo plano do usuario
+    const productCount = (await this.productRepository.findByCompanyId(company.id!, 1, 1)).count;
+    await this.quotaService.checkQuota(userId, userRole as Role, 'maxProducts', productCount);
 
     if (!Object.values(ProductCategory).includes(dto.category as ProductCategory)) {
       throw new DomainError(

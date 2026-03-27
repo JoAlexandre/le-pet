@@ -57,7 +57,7 @@ UserModel.init(
     email: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      unique: true,
+      unique: 'users_email_unique',
     },
     password: {
       type: DataTypes.STRING(255),

@@ -3,3 +3,8 @@ export { EmailLoginDto } from './email-login-dto';
 export { CompleteOnboardingDto } from './complete-onboarding-dto';
 export { AuthResponseDto } from './auth-response-dto';
 export { RefreshTokenDto } from './refresh-token-dto';
+export { CreateCheckoutDto } from './create-checkout-dto';
+export { CheckoutResponseDto } from './checkout-response-dto';
+export { PlanResponseDto } from './plan-response-dto';
+export { SubscriptionResponseDto } from './subscription-response-dto';
+export { ChangePlanDto } from './change-plan-dto';

@@ -8,12 +8,14 @@ import { CreateServiceDto } from '../../dtos/create-service-dto';
 import { ServiceResponseDto } from '../../dtos/service-response-dto';
 import { ServiceMapper } from '../../../infrastructure/http/mappers/service-mapper';
 import { DomainError } from '../../../shared/errors';
+import { QuotaService } from '../../../domain/services/quota-service';
 
 export class CreateServiceUseCase {
   constructor(
     private serviceRepository: ServiceRepository,
     private companyRepository: CompanyRepository,
     private userRepository: UserRepository,
+    private quotaService: QuotaService,
   ) {}
 
   async execute(
@@ -39,6 +41,16 @@ export class CreateServiceUseCase {
     } else if (userRole !== Role.ADMIN) {
       throw new DomainError('Access denied: insufficient permissions', 403);
     }
+
+    // Verificacao de quota de servicos pelo plano do usuario
+    let serviceCount = 0;
+    if (companyId) {
+      serviceCount = (await this.serviceRepository.findByCompanyId(companyId, 1, 1)).count;
+    } else if (professionalId) {
+      serviceCount =
+        (await this.serviceRepository.findByProfessionalId(professionalId, 1, 1)).count;
+    }
+    await this.quotaService.checkQuota(userId, userRole as Role, 'maxServices', serviceCount);
 
     if (!Object.values(ServiceCategory).includes(dto.category as ServiceCategory)) {
       throw new DomainError(

@@ -101,6 +101,41 @@ import { UpdateLostAnimalUseCase } from '../../application/use-cases/lost-animal
 import { DeleteLostAnimalUseCase } from '../../application/use-cases/lost-animal/delete-lost-animal-use-case';
 import { LostAnimalController } from './controllers/lost-animal-controller';
 import { LocalFileStorageProvider } from '../external/providers/local-file-storage-provider';
+import { SequelizePetinderProfileRepository } from '../database/repositories/sequelize-petinder-profile-repository';
+import { SequelizePetinderSwipeRepository } from '../database/repositories/sequelize-petinder-swipe-repository';
+import { SequelizePetinderMatchRepository } from '../database/repositories/sequelize-petinder-match-repository';
+import { SequelizePetinderMessageRepository } from '../database/repositories/sequelize-petinder-message-repository';
+import { EnablePetinderUseCase } from '../../application/use-cases/petinder/enable-petinder-use-case';
+import { DisablePetinderUseCase } from '../../application/use-cases/petinder/disable-petinder-use-case';
+import { GetPetinderProfileUseCase } from '../../application/use-cases/petinder/get-petinder-profile-use-case';
+import { GetPetinderRecommendationsUseCase } from '../../application/use-cases/petinder/get-petinder-recommendations-use-case';
+import { SwipePetinderUseCase } from '../../application/use-cases/petinder/swipe-petinder-use-case';
+import { ListPetinderMatchesUseCase } from '../../application/use-cases/petinder/list-petinder-matches-use-case';
+import { SendPetinderMessageUseCase } from '../../application/use-cases/petinder/send-petinder-message-use-case';
+import { ListPetinderMessagesUseCase } from '../../application/use-cases/petinder/list-petinder-messages-use-case';
+import { PetinderController } from './controllers/petinder-controller';
+import { SequelizeMedicalRecordRepository } from '../database/repositories/sequelize-medical-record-repository';
+import { SequelizePlanRepository } from '../database/repositories/sequelize-plan-repository';
+import { SequelizeSubscriptionRepository } from '../database/repositories/sequelize-subscription-repository';
+import { StripePaymentGatewayProvider } from '../external/providers/stripe-payment-gateway-provider';
+import { QuotaService } from '../../domain/services/quota-service';
+import { CreateMedicalRecordUseCase } from '../../application/use-cases/medical-record/create-medical-record-use-case';
+import { GetMedicalRecordUseCase } from '../../application/use-cases/medical-record/get-medical-record-use-case';
+import { ListMedicalRecordsByAnimalUseCase } from '../../application/use-cases/medical-record/list-medical-records-by-animal-use-case';
+import { ListMedicalRecordsByProfessionalUseCase } from '../../application/use-cases/medical-record/list-medical-records-by-professional-use-case';
+import { UpdateMedicalRecordUseCase } from '../../application/use-cases/medical-record/update-medical-record-use-case';
+import { DeleteMedicalRecordUseCase } from '../../application/use-cases/medical-record/delete-medical-record-use-case';
+import { ListPlansUseCase } from '../../application/use-cases/subscription/list-plans-use-case';
+import { GetCurrentSubscriptionUseCase } from '../../application/use-cases/subscription/get-current-subscription-use-case';
+import { CreateCheckoutUseCase } from '../../application/use-cases/subscription/create-checkout-use-case';
+import { ChangePlanUseCase } from '../../application/use-cases/subscription/change-plan-use-case';
+import { CancelSubscriptionUseCase } from '../../application/use-cases/subscription/cancel-subscription-use-case';
+import { HandleStripeWebhookUseCase } from '../../application/use-cases/subscription/handle-stripe-webhook-use-case';
+import { GetBillingPortalUseCase } from '../../application/use-cases/subscription/get-billing-portal-use-case';
+import { MedicalRecordController } from './controllers/medical-record-controller';
+import { PlanController } from './controllers/plan-controller';
+import { SubscriptionController } from './controllers/subscription-controller';
+import { StripeWebhookController } from './controllers/stripe-webhook-controller';
 
 // Repositorios
 const userRepository = new SequelizeUserRepository();
@@ -119,6 +154,8 @@ const scheduleRepository = new SequelizeScheduleRepository();
 const appointmentRepository = new SequelizeAppointmentRepository();
 const lostAnimalRepository = new SequelizeLostAnimalRepository();
 const lostAnimalMediaRepository = new SequelizeLostAnimalMediaRepository();
+const planRepository = new SequelizePlanRepository();
+const subscriptionRepository = new SequelizeSubscriptionRepository();
 
 // Providers
 const hashProvider = new BcryptHashProvider();
@@ -128,9 +165,11 @@ const appleOAuthProvider = new AppleOAuthProvider();
 const microsoftOAuthProvider = new MicrosoftOAuthProvider();
 const crmvValidationProvider = new CfmvCrmvValidationProvider();
 const fileStorageProvider = new LocalFileStorageProvider();
+const stripePaymentGatewayProvider = new StripePaymentGatewayProvider();
 
 // Services
 const sessionService = new SessionService(sessionRepository);
+export const quotaService = new QuotaService(planRepository, subscriptionRepository);
 
 // Use Cases - Auth
 const googleAuthUseCase = new GoogleAuthUseCase(
@@ -202,7 +241,7 @@ const associateCompanyUseCase = new AssociateCompanyUseCase(
 );
 
 // Use Cases - Animal
-const createAnimalUseCase = new CreateAnimalUseCase(animalRepository);
+const createAnimalUseCase = new CreateAnimalUseCase(animalRepository, quotaService);
 const getAnimalUseCase = new GetAnimalUseCase(animalRepository);
 const listAnimalsUseCase = new ListAnimalsUseCase(animalRepository);
 const updateAnimalUseCase = new UpdateAnimalUseCase(animalRepository);
@@ -230,6 +269,7 @@ const createServiceUseCase = new CreateServiceUseCase(
   serviceRepository,
   companyRepository,
   userRepository,
+  quotaService,
 );
 const getServiceUseCase = new GetServiceUseCase(serviceRepository);
 const listServicesUseCase = new ListServicesUseCase(serviceRepository);
@@ -241,6 +281,7 @@ const createProductUseCase = new CreateProductUseCase(
   productRepository,
   productSizeRepository,
   companyRepository,
+  quotaService,
 );
 const getProductUseCase = new GetProductUseCase(
   productRepository,
@@ -439,6 +480,7 @@ const createLostAnimalUseCase = new CreateLostAnimalUseCase(
   lostAnimalRepository,
   lostAnimalMediaRepository,
   animalRepository,
+  quotaService,
 );
 const getLostAnimalUseCase = new GetLostAnimalUseCase(
   lostAnimalRepository,
@@ -470,5 +512,134 @@ export const lostAnimalController = new LostAnimalController(
   deleteLostAnimalUseCase,
   fileStorageProvider,
 );
+
+// Repositorios - PeTinder
+const petinderProfileRepository = new SequelizePetinderProfileRepository();
+const petinderSwipeRepository = new SequelizePetinderSwipeRepository();
+const petinderMatchRepository = new SequelizePetinderMatchRepository();
+const petinderMessageRepository = new SequelizePetinderMessageRepository();
+
+// Use Cases - PeTinder
+const enablePetinderUseCase = new EnablePetinderUseCase(
+  petinderProfileRepository,
+  animalRepository,
+);
+const disablePetinderUseCase = new DisablePetinderUseCase(
+  petinderProfileRepository,
+  animalRepository,
+);
+const getPetinderProfileUseCase = new GetPetinderProfileUseCase(
+  petinderProfileRepository,
+  animalRepository,
+);
+const getPetinderRecommendationsUseCase = new GetPetinderRecommendationsUseCase(
+  petinderProfileRepository,
+  petinderSwipeRepository,
+  animalRepository,
+);
+const swipePetinderUseCase = new SwipePetinderUseCase(
+  petinderSwipeRepository,
+  petinderMatchRepository,
+  petinderProfileRepository,
+  animalRepository,
+);
+const listPetinderMatchesUseCase = new ListPetinderMatchesUseCase(
+  petinderMatchRepository,
+  animalRepository,
+);
+const sendPetinderMessageUseCase = new SendPetinderMessageUseCase(
+  petinderMessageRepository,
+  petinderMatchRepository,
+  animalRepository,
+);
+const listPetinderMessagesUseCase = new ListPetinderMessagesUseCase(
+  petinderMessageRepository,
+  petinderMatchRepository,
+  animalRepository,
+);
+
+export const petinderController = new PetinderController(
+  enablePetinderUseCase,
+  disablePetinderUseCase,
+  getPetinderProfileUseCase,
+  getPetinderRecommendationsUseCase,
+  swipePetinderUseCase,
+  listPetinderMatchesUseCase,
+  sendPetinderMessageUseCase,
+  listPetinderMessagesUseCase,
+);
+
+// Repositorios - Medical Record
+const medicalRecordRepository = new SequelizeMedicalRecordRepository();
+
+// Use Cases - Medical Record
+const createMedicalRecordUseCase = new CreateMedicalRecordUseCase(
+  medicalRecordRepository,
+  animalRepository,
+  quotaService,
+);
+const getMedicalRecordUseCase = new GetMedicalRecordUseCase(medicalRecordRepository);
+const listMedicalRecordsByAnimalUseCase = new ListMedicalRecordsByAnimalUseCase(
+  medicalRecordRepository,
+  animalRepository,
+);
+const listMedicalRecordsByProfessionalUseCase = new ListMedicalRecordsByProfessionalUseCase(
+  medicalRecordRepository,
+);
+const updateMedicalRecordUseCase = new UpdateMedicalRecordUseCase(medicalRecordRepository);
+const deleteMedicalRecordUseCase = new DeleteMedicalRecordUseCase(medicalRecordRepository);
+
+export const medicalRecordController = new MedicalRecordController(
+  createMedicalRecordUseCase,
+  getMedicalRecordUseCase,
+  listMedicalRecordsByAnimalUseCase,
+  listMedicalRecordsByProfessionalUseCase,
+  updateMedicalRecordUseCase,
+  deleteMedicalRecordUseCase,
+);
+
+// Use Cases - Subscription & Plans
+const listPlansUseCase = new ListPlansUseCase(planRepository);
+const getCurrentSubscriptionUseCase = new GetCurrentSubscriptionUseCase(
+  subscriptionRepository,
+  planRepository,
+);
+const createCheckoutUseCase = new CreateCheckoutUseCase(
+  planRepository,
+  subscriptionRepository,
+  stripePaymentGatewayProvider,
+  userRepository,
+);
+const changePlanUseCase = new ChangePlanUseCase(
+  planRepository,
+  subscriptionRepository,
+  stripePaymentGatewayProvider,
+);
+const cancelSubscriptionUseCase = new CancelSubscriptionUseCase(
+  subscriptionRepository,
+  stripePaymentGatewayProvider,
+);
+const handleStripeWebhookUseCase = new HandleStripeWebhookUseCase(
+  subscriptionRepository,
+  planRepository,
+  stripePaymentGatewayProvider,
+);
+const getBillingPortalUseCase = new GetBillingPortalUseCase(
+  subscriptionRepository,
+  stripePaymentGatewayProvider,
+);
+
+// Controllers - Plans & Subscriptions
+export const planController = new PlanController(listPlansUseCase);
+
+export const subscriptionController = new SubscriptionController(
+  getCurrentSubscriptionUseCase,
+  createCheckoutUseCase,
+  changePlanUseCase,
+  cancelSubscriptionUseCase,
+  getBillingPortalUseCase,
+);
+
+export const stripeWebhookController = new StripeWebhookController(handleStripeWebhookUseCase);
 
 export { tokenProvider };

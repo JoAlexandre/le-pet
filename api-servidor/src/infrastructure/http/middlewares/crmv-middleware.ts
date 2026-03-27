@@ -1,7 +1,5 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from './auth-middleware';
-import { CrmvStatus } from '../../../domain/enums/crmv-status';
-import { DomainError } from '../../../shared/errors';
 
 export function crmvMiddleware(
   req: AuthenticatedRequest,

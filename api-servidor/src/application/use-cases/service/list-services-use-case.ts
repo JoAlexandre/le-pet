@@ -2,6 +2,7 @@ import { ServiceRepository } from '../../../domain/repositories/service-reposito
 import { ServiceResponseDto } from '../../dtos/service-response-dto';
 import { ServiceMapper } from '../../../infrastructure/http/mappers/service-mapper';
 import { PaginatedResult } from '../../../shared/interfaces/pagination';
+import { Service } from '../../../domain/entities/service';
 
 export class ListServicesUseCase {
   constructor(private serviceRepository: ServiceRepository) {}

@@ -37,7 +37,7 @@ export class LostAnimalController {
         media: mediaItems,
       };
 
-      const result = await this.createLostAnimalUseCase.execute(req.user!.sub, dto);
+      const result = await this.createLostAnimalUseCase.execute(req.user!.sub, req.user!.role!, dto);
       res.status(201).json(result);
     } catch (error) {
       next(error);

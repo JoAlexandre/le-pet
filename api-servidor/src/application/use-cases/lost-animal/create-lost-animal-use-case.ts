@@ -5,19 +5,35 @@ import { LostAnimal } from '../../../domain/entities/lost-animal';
 import { LostAnimalMedia } from '../../../domain/entities/lost-animal-media';
 import { LostAnimalStatus } from '../../../domain/enums/lost-animal-status';
 import { LostAnimalMediaType } from '../../../domain/enums/lost-animal-media-type';
+import { Role } from '../../../domain/enums/role';
 import { CreateLostAnimalDto } from '../../dtos/create-lost-animal-dto';
 import { LostAnimalResponseDto } from '../../dtos/lost-animal-response-dto';
 import { LostAnimalMapper } from '../../../infrastructure/http/mappers/lost-animal-mapper';
 import { DomainError } from '../../../shared/errors';
+import { QuotaService } from '../../../domain/services/quota-service';
 
 export class CreateLostAnimalUseCase {
   constructor(
     private lostAnimalRepository: LostAnimalRepository,
     private lostAnimalMediaRepository: LostAnimalMediaRepository,
     private animalRepository: AnimalRepository,
+    private quotaService: QuotaService,
   ) {}
 
-  async execute(tutorId: string, dto: CreateLostAnimalDto): Promise<LostAnimalResponseDto> {
+  async execute(
+    tutorId: string,
+    userRole: string,
+    dto: CreateLostAnimalDto,
+  ): Promise<LostAnimalResponseDto> {
+    // Verificacao de quota de posts de animais perdidos pelo plano do usuario
+    const activeCount = (await this.lostAnimalRepository.findByTutorId(tutorId, 1, 1)).count;
+    await this.quotaService.checkQuota(
+      tutorId,
+      userRole as Role,
+      'maxLostAnimalPosts',
+      activeCount,
+    );
+
     // Validar animal vinculado (se informado)
     if (dto.animalId) {
       const animal = await this.animalRepository.findById(dto.animalId);
