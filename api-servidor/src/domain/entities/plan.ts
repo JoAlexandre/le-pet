@@ -8,15 +8,22 @@ export interface PlanLimits {
   maxEmployees: number;
   maxLostAnimalPosts: number;
   maxMedicalRecordsPerMonth: number;
+  maxAppointmentsPerMonth: number;
   canUsePetinder: boolean;
+  canUseLostAndFound: boolean;
   canExposeSchedule: boolean;
   canUseOnlineAppointments: boolean;
   canUseMedicalRecords: boolean;
+  canUseMiniShop: boolean;
+  canSharePetProfile: boolean;
   hasSearchHighlight: boolean;
   hasVaccineNotifications: boolean;
   hasFullVaccineHistory: boolean;
+  hasEditableHistory: boolean;
   hasReports: boolean;
   hasAdvancedReports: boolean;
+  hasPriorityNotifications: boolean;
+  hasChatSupport: boolean;
 }
 
 export interface PlanProps {

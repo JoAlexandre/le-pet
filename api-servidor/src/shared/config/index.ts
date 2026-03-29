@@ -6,11 +6,11 @@ export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   db: {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '3306', 10),
-    name: process.env.DB_NAME || 'lepet_dev',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
+    host: process.env.NODE_ENV  === 'development' ? process.env.DB_HOST_DEV : process.env.DB_HOST,
+    port: parseInt(process.env.NODE_ENV  === 'development' ? process.env.DB_PORT_DEV! : process.env.DB_PORT!, 10),
+    name: process.env.NODE_ENV  === 'development' ? process.env.DB_NAME_DEV : process.env.DB_NAME,
+    user: process.env.NODE_ENV  === 'development' ? process.env.DB_USER_DEV : process.env.DB_USER,
+    password: process.env.NODE_ENV  === 'development' ? process.env.DB_PASSWORD_DEV : process.env.DB_PASSWORD,
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'default-secret',
@@ -43,8 +43,8 @@ export const config = {
     s3SecretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY || '',
   },
   stripe: {
-    secretKey: process.env.STRIPE_SECRET_KEY || '',
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
+    secretKey: process.env.NODE_ENV  === 'development' ? process.env.STRIPE_SECRET_KEY_DEV : process.env.STRIPE_SECRET_KEY,
+    publishableKey: process.env.NODE_ENV  === 'development' ? process.env.STRIPE_PUBLISHABLE_KEY_DEV : process.env.STRIPE_PUBLISHABLE_KEY,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
   },
 };

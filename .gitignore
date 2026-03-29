@@ -140,6 +140,7 @@ vite.config.ts.timestamp-*
 
 #github
 .github/commands
+.github/agents
 .github/mobile
 .github/servidor
 .github/project-structure.md

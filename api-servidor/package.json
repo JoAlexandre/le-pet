@@ -15,7 +15,9 @@
     "lint:fix": "eslint 'src/**/*.ts' --fix",
     "migrate": "sequelize-cli db:migrate",
     "migrate:undo": "sequelize-cli db:migrate:undo",
-    "migrate:undo:all": "sequelize-cli db:migrate:undo:all"
+    "migrate:undo:all": "sequelize-cli db:migrate:undo:all",
+    "seed:plans": "ts-node src/infrastructure/database/seed/seed-plans.ts",
+    "seed:stripe": "ts-node src/infrastructure/database/seed/stripe-products-seed.ts"
   },
   "keywords": [],
   "author": "",

@@ -14,6 +14,10 @@ export class HandleStripeWebhookUseCase {
 
   async execute(payload: Buffer, signature: string): Promise<void> {
     const event = this.paymentGatewayProvider.constructWebhookEvent(payload, signature);
+    console.dir({
+      title: `Evento no webhook da Stripe recebido: ${event.type}`,
+      data: event.data
+    });
 
     switch (event.type) {
       case 'checkout.session.completed':
