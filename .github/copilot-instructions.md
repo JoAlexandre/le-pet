@@ -72,6 +72,7 @@
 - Use const constructors when possible
 - Implement proper state management
 - Use named parameters for functions with multiple arguments
+- **Icons**: ALWAYS use icons from the `material_design_icons_flutter` package (`MdiIcons`). DO NOT use Flutter's built-in `Icons` class. Import with `import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';` and reference icons via `MdiIcons.iconName` (e.g., `MdiIcons.dog`, `MdiIcons.cat`, `MdiIcons.heart`)
 
 ##### Shimmer Loading Pattern (Flutter)
 When implementing shimmer loading states in the mobile app, ALWAYS follow these rules:
