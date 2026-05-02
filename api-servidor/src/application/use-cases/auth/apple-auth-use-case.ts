@@ -10,6 +10,7 @@ import { AuthResponseDto } from '../../dtos/auth-response-dto';
 import { OAuthLoginDto } from '../../dtos/oauth-login-dto';
 import { UserMapper } from '../../../infrastructure/http/mappers/user-mapper';
 import { SessionService } from '../../services/refresh-token-service';
+import { logger } from '../../../shared/logger';
 
 export class AppleAuthUseCase {
   constructor(
@@ -23,7 +24,8 @@ export class AppleAuthUseCase {
     let oauthData;
     try {
       oauthData = await this.appleOAuthProvider.validateToken(dto.idToken);
-    } catch {
+    } catch (err) {
+      logger.warn('Apple token validation failed', { error: (err as Error).message, name: (err as Error).name });
       throw new InvalidOAuthTokenError();
     }
 

@@ -10,6 +10,7 @@ import { AuthResponseDto } from '../../dtos/auth-response-dto';
 import { OAuthLoginDto } from '../../dtos/oauth-login-dto';
 import { UserMapper } from '../../../infrastructure/http/mappers/user-mapper';
 import { SessionService } from '../../services/refresh-token-service';
+import { logger } from '../../../shared/logger';
 
 export class GoogleAuthUseCase {
   constructor(
@@ -23,7 +24,8 @@ export class GoogleAuthUseCase {
     let oauthData;
     try {
       oauthData = await this.googleOAuthProvider.validateToken(dto.idToken);
-    } catch {
+    } catch (err) {
+      logger.warn('Google token validation failed', { error: (err as Error).message, name: (err as Error).name });
       throw new InvalidOAuthTokenError();
     }
 

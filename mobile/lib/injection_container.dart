@@ -75,7 +75,13 @@ Future<void> init() async {
   // ============================================
 
   // Auth
-  sl.registerLazySingleton(() => GoogleSignIn());
+  sl.registerLazySingleton(
+    () => GoogleSignIn(
+      // Web client ID - define o audience do idToken para validacao no servidor
+      serverClientId: '919429457771-jf5ec2lbt4nhtdd6o95g8be671pcg3hk.apps.googleusercontent.com',
+      scopes: ['email', 'profile'],
+    ),
+  );
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       remoteDatasource: sl(),

@@ -88,16 +88,16 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   const SizedBox(height: 60),
                   _buildHeader(),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 32),
+                  if (authProvider.errorMessage != null) ...[
+                    _buildErrorMessage(authProvider.errorMessage!),
+                    const SizedBox(height: 16),
+                  ],
                   _buildSocialButtons(authProvider),
                   const SizedBox(height: 24),
                   _buildDivider(),
                   const SizedBox(height: 24),
                   _buildEmailForm(authProvider),
-                  if (authProvider.errorMessage != null) ...[
-                    const SizedBox(height: 16),
-                    _buildErrorMessage(authProvider.errorMessage!),
-                  ],
                   const SizedBox(height: 24),
                 ],
               ),
@@ -111,13 +111,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildHeader() {
     return Column(
       children: [
-        Container(
-          child: Image.asset(
-            'assets/icons/app-logo.png',
-            width: 180,
-            height: 180,
-          ),
-        ),
+        Image.asset('assets/icons/app-logo.png', width: 180, height: 180),
         const SizedBox(height: 24),
         const Text(
           'Bem-vindo ao LePet',
@@ -142,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         _SocialLoginButton(
           onPressed: authProvider.isLoading ? null : _handleGoogleLogin,
+          isLoading: authProvider.isLoading,
           icon: MdiIcons.google,
           label: 'Continuar com Google',
           backgroundColor: AppColors.surface,
@@ -152,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
           const SizedBox(height: 12),
           _SocialLoginButton(
             onPressed: authProvider.isLoading ? null : _handleAppleLogin,
+            isLoading: authProvider.isLoading,
             icon: MdiIcons.apple,
             label: 'Continuar com Apple',
             backgroundColor: AppColors.textPrimary,
@@ -309,6 +305,7 @@ class _LoginPageState extends State<LoginPage> {
 
 class _SocialLoginButton extends StatelessWidget {
   final VoidCallback? onPressed;
+  final bool isLoading;
   final IconData icon;
   final String label;
   final Color backgroundColor;
@@ -317,6 +314,7 @@ class _SocialLoginButton extends StatelessWidget {
 
   const _SocialLoginButton({
     required this.onPressed,
+    required this.isLoading,
     required this.icon,
     required this.label,
     required this.backgroundColor,
@@ -339,17 +337,26 @@ class _SocialLoginButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 24, color: textColor),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: AppTextStyles.labelLarge.copyWith(color: textColor),
-            ),
-          ],
-        ),
+        child: isLoading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(textColor),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 24, color: textColor),
+                  const SizedBox(width: 12),
+                  Text(
+                    label,
+                    style: AppTextStyles.labelLarge.copyWith(color: textColor),
+                  ),
+                ],
+              ),
       ),
     );
   }

@@ -51,10 +51,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, User>> loginWithGoogle() async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
     try {
+      if (!await _networkInfo.isConnected) {
+        return const Left(NetworkFailure());
+      }
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         return const Left(AuthFailure(message: 'Login com Google cancelado.'));
@@ -89,10 +89,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, User>> loginWithApple() async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
     try {
+      if (!await _networkInfo.isConnected) {
+        return const Left(NetworkFailure());
+      }
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,

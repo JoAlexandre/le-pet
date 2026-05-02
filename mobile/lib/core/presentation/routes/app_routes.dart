@@ -3,6 +3,7 @@ import '../../../features/auth/presentation/pages/login_page.dart';
 import '../../../features/auth/presentation/pages/onboarding_page.dart';
 import '../../../features/auth/presentation/pages/splash_page.dart';
 import '../../../features/auth/presentation/pages/welcome_page.dart';
+import '../../../features/home/presentation/pages/home_shell_page.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -20,7 +21,7 @@ class AppRoutes {
     welcome: (context) => const WelcomePage(),
     login: (context) => const LoginPage(),
     onboarding: (context) => const OnboardingPage(),
-    home: (context) => const MainPagePlaceholder(),
+    home: (context) => const HomeShellPage(),
   };
 
   static Route<dynamic>? onUnknownRoute(RouteSettings settings) {
@@ -37,15 +38,5 @@ class AppRoutes {
       return MaterialPageRoute(settings: settings, builder: routeBuilder);
     }
     return null;
-  }
-}
-
-/// Placeholder para MainPage ate a implementacao real
-class MainPagePlaceholder extends StatelessWidget {
-  const MainPagePlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Home')));
   }
 }
