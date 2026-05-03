@@ -4,6 +4,8 @@ import '../../../features/auth/presentation/pages/onboarding_page.dart';
 import '../../../features/auth/presentation/pages/splash_page.dart';
 import '../../../features/auth/presentation/pages/welcome_page.dart';
 import '../../../features/home/presentation/pages/home_shell_page.dart';
+import '../../../features/profile/presentation/pages/edit_profile_page.dart';
+import '../../../features/profile/presentation/pages/change_password_page.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -13,6 +15,8 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String home = '/home';
+  static const String editProfile = '/profile/edit';
+  static const String changePassword = '/profile/change-password';
 
   static const String initialRoute = splash;
 
@@ -22,6 +26,8 @@ class AppRoutes {
     login: (context) => const LoginPage(),
     onboarding: (context) => const OnboardingPage(),
     home: (context) => const HomeShellPage(),
+    editProfile: (context) => const EditProfilePage(),
+    changePassword: (context) => const ChangePasswordPage(),
   };
 
   static Route<dynamic>? onUnknownRoute(RouteSettings settings) {

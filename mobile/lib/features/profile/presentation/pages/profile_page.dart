@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../../core/domain/enums/user_role.dart';
 import '../../../../../core/presentation/routes/app_routes.dart';
 import '../../../../../features/auth/presentation/providers/auth_provider.dart';
@@ -20,6 +21,7 @@ class ProfilePage extends StatelessWidget {
     final authProvider = context.watch<AuthProvider>();
     final user = authProvider.user;
     final role = user?.role ?? UserRole.tutor;
+    final isLoading = authProvider.isLoading;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -27,14 +29,14 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProfileHeaderWidget(
-              name: user?.name ?? '',
-              email: user?.email ?? '',
-              role: role,
-              onSettingsTap: () {
-                // Configuracoes - implementado em fase futura
-              },
-            ),
+            isLoading
+                ? _buildHeaderShimmer()
+                : ProfileHeaderWidget(
+                    name: user?.name ?? '',
+                    email: user?.email ?? '',
+                    role: role,
+                    onSettingsTap: () {},
+                  ),
             const SizedBox(height: 24),
             if (role == UserRole.tutor) ...[
               PetAvatarRowWidget(
@@ -66,6 +68,78 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  Widget _buildHeaderShimmer() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.primary, AppColors.primaryDark],
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(width: 40),
+                  Text(
+                    'Perfil',
+                    style: AppTextStyles.h4.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 40),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Shimmer.fromColors(
+                baseColor: Colors.white.withValues(alpha: 0.3),
+                highlightColor: Colors.white.withValues(alpha: 0.6),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: 160,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: 200,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFeatureCards(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -91,7 +165,10 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildAccountSection(BuildContext context, UserRole role) {
+  Widget _buildAccountSection(
+    BuildContext context,
+    UserRole role,
+  ) {
     return ProfileSectionWidget(
       title: 'Conta',
       children: [
@@ -107,7 +184,15 @@ class ProfilePage extends StatelessWidget {
           iconBackgroundColor: const Color(0xFF26A69A),
           title: 'Editar Perfil',
           subtitle: 'Atualize suas informacoes',
-          onTap: () {},
+          onTap: () => Navigator.of(context).pushNamed(AppRoutes.editProfile),
+        ),
+        ProfileMenuItemWidget(
+          icon: MdiIcons.lockReset,
+          iconBackgroundColor: AppColors.secondary,
+          title: 'Alterar Senha',
+          subtitle: 'Redefina sua senha de acesso',
+          onTap: () =>
+              Navigator.of(context).pushNamed(AppRoutes.changePassword),
         ),
         ProfileMenuItemWidget(
           icon: MdiIcons.bellOutline,

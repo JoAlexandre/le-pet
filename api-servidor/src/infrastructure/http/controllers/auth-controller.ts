@@ -8,6 +8,7 @@ import { RefreshTokenUseCase } from '../../../application/use-cases/auth/refresh
 import { CompleteOnboardingUseCase } from '../../../application/use-cases/auth/complete-onboarding-use-case';
 import { LogoutUseCase } from '../../../application/use-cases/auth/logout-use-case';
 import { GetCurrentUserUseCase } from '../../../application/use-cases/auth/get-current-user-use-case';
+import { ChangePasswordUseCase } from '../../../application/use-cases/auth/change-password-use-case';
 import { AuthenticatedRequest } from '../middlewares/auth-middleware';
 import { Role, SpecialtyType } from '@domain/enums';
 
@@ -22,6 +23,7 @@ export class AuthController {
     private completeOnboardingUseCase: CompleteOnboardingUseCase,
     private logoutUseCase: LogoutUseCase,
     private getCurrentUserUseCase: GetCurrentUserUseCase,
+    private changePasswordUseCase: ChangePasswordUseCase,
   ) {}
 
   async googleAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -174,6 +176,23 @@ export class AuthController {
     try {
       const user = await this.getCurrentUserUseCase.execute(req.user!.sub);
       res.status(200).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async changePassword(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const body = req.body as { newPassword: string };
+      await this.changePasswordUseCase.execute({
+        userId: req.user!.sub,
+        newPassword: body.newPassword,
+      });
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

@@ -7,3 +7,4 @@ export { RefreshTokenUseCase } from './refresh-token-use-case';
 export { CompleteOnboardingUseCase } from './complete-onboarding-use-case';
 export { LogoutUseCase } from './logout-use-case';
 export { GetCurrentUserUseCase } from './get-current-user-use-case';
+export { ChangePasswordUseCase } from './change-password-use-case';

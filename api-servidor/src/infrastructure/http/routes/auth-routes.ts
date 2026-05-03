@@ -414,4 +414,50 @@ authRouter.post('/auth/logout', authMiddleware, (req, res, next) =>
  */
 authRouter.get('/auth/me', authMiddleware, (req, res, next) => authController.me(req, res, next));
 
+/**
+ * @openapi
+ * /auth/change-password:
+ *   patch:
+ *     tags:
+ *       - Authentication
+ *     summary: Change password
+ *     description: Changes the password for email-authenticated users. Not available for OAuth accounts.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: Current password
+ *               newPassword:
+ *                 type: string
+ *                 description: New password (min 8 chars, 1 uppercase, 1 number)
+ *           example:
+ *             currentPassword: "OldPass123"
+ *             newPassword: "NewPass456"
+ *     responses:
+ *       204:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Invalid current password or password does not meet requirements
+ *       401:
+ *         description: Unauthorized
+ */
+authRouter.patch(
+  '/auth/change-password',
+  authMiddleware,
+  validationMiddleware({
+    newPassword: { required: true, type: 'string' },
+  }),
+  (req, res, next) => authController.changePassword(req, res, next),
+);
+
 export { authRouter };

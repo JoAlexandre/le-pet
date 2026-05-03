@@ -18,6 +18,7 @@ import { stripeWebhookRouter } from './stripe-webhook-routes';
 import { webRouter } from './web-routes';
 import { docsRouter } from './docs-routes';
 import { lgpdLogRouter } from './lgpd-log-routes';
+import { userRouter } from './user-routes';
 
 const apiPrefix = process.env.API_PREFIX || '/api/v1';
 const router = Router();
@@ -43,6 +44,7 @@ router.use(apiPrefix, planRouter);
 router.use(apiPrefix, subscriptionRouter);
 router.use(apiPrefix, stripeWebhookRouter);
 router.use(apiPrefix, lgpdLogRouter);
+router.use(apiPrefix, userRouter);
 
 // Documentacao
 router.use(apiPrefix, docsRouter);

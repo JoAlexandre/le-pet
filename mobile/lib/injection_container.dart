@@ -25,6 +25,13 @@ import 'features/auth/domain/usecases/login_usecase.dart';
 import 'features/auth/domain/usecases/logout_usecase.dart';
 import 'features/auth/domain/usecases/update_onboarding_usecase.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
+import 'features/profile/data/datasources/profile_remote_datasource.dart';
+import 'features/profile/data/datasources/profile_remote_datasource_impl.dart';
+import 'features/profile/data/repositories/profile_repository_impl.dart';
+import 'features/profile/domain/repositories/profile_repository.dart';
+import 'features/profile/domain/usecases/update_user_usecase.dart';
+import 'features/profile/domain/usecases/change_password_usecase.dart';
+import 'features/profile/presentation/providers/profile_provider.dart';
 
 final sl = GetIt.instance;
 
@@ -70,6 +77,11 @@ Future<void> init() async {
     ),
   );
 
+  // Profile
+  sl.registerLazySingleton<ProfileRemoteDatasource>(
+    () => ProfileRemoteDatasourceImpl(dio: sl<Dio>()),
+  );
+
   // ============================================
   //  4. REPOSITORIES
   // ============================================
@@ -78,7 +90,8 @@ Future<void> init() async {
   sl.registerLazySingleton(
     () => GoogleSignIn(
       // Web client ID - define o audience do idToken para validacao no servidor
-      serverClientId: '919429457771-jf5ec2lbt4nhtdd6o95g8be671pcg3hk.apps.googleusercontent.com',
+      serverClientId:
+          '919429457771-jf5ec2lbt4nhtdd6o95g8be671pcg3hk.apps.googleusercontent.com',
       scopes: ['email', 'profile'],
     ),
   );
@@ -88,6 +101,15 @@ Future<void> init() async {
       localDatasource: sl(),
       networkInfo: sl(),
       googleSignIn: sl(),
+    ),
+  );
+
+  // Profile
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(
+      remoteDatasource: sl(),
+      localDatasource: sl(),
+      networkInfo: sl(),
     ),
   );
 
@@ -103,12 +125,16 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CheckAuthStatusUseCase(sl()));
   sl.registerLazySingleton(() => UpdateOnboardingUseCase(sl()));
 
+  // Profile
+  sl.registerLazySingleton(() => UpdateUserUseCase(sl()));
+  sl.registerLazySingleton(() => ChangePasswordUseCase(sl()));
+
   // ============================================
   //  6. PROVIDERS
   // ============================================
 
   // Auth
-  sl.registerFactory(
+  sl.registerLazySingleton(
     () => AuthProvider(
       loginUseCase: sl(),
       googleAuthUseCase: sl(),
@@ -117,5 +143,10 @@ Future<void> init() async {
       checkAuthStatusUseCase: sl(),
       updateOnboardingUseCase: sl(),
     ),
+  );
+
+  // Profile
+  sl.registerFactory(
+    () => ProfileProvider(updateUserUseCase: sl(), changePasswordUseCase: sl(), authProvider: sl()),
   );
 }

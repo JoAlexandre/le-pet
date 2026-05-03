@@ -24,12 +24,12 @@ export class EmailLoginUseCase {
       throw new InvalidCredentialsError();
     }
 
-    if (user.authProvider !== AuthProvider.EMAIL) {
-      throw new DomainError(
-        'This account uses OAuth authentication. Please sign in with your OAuth provider.',
-        400,
-      );
-    }
+    // if (user.authProvider !== AuthProvider.EMAIL) {
+    //   throw new DomainError(
+    //     'This account uses OAuth authentication. Please sign in with your OAuth provider.',
+    //     400,
+    //   );
+    // }
 
     if (!user.password) {
       throw new InvalidCredentialsError();

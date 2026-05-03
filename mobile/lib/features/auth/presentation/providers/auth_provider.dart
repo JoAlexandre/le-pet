@@ -165,4 +165,10 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
   }
+
+  // Atualiza os dados do usuario em memoria (usado apos edicao de perfil)
+  void updateUser(User user) {
+    _user = user;
+    notifyListeners();
+  }
 }

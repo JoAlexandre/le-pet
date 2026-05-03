@@ -22,6 +22,8 @@ import { RefreshTokenUseCase } from '../../application/use-cases/auth/refresh-to
 import { CompleteOnboardingUseCase } from '../../application/use-cases/auth/complete-onboarding-use-case';
 import { LogoutUseCase } from '../../application/use-cases/auth/logout-use-case';
 import { GetCurrentUserUseCase } from '../../application/use-cases/auth/get-current-user-use-case';
+import { ChangePasswordUseCase } from '../../application/use-cases/auth/change-password-use-case';
+import { UpdateUserUseCase } from '../../application/use-cases/user/update-user-use-case';
 import { CreateCompanyUseCase } from '../../application/use-cases/company/create-company-use-case';
 import { GetCompanyUseCase } from '../../application/use-cases/company/get-company-use-case';
 import { ListCompaniesUseCase } from '../../application/use-cases/company/list-companies-use-case';
@@ -75,6 +77,7 @@ import { VaccineController } from './controllers/vaccine-controller';
 import { ServiceController } from './controllers/service-controller';
 import { ProductController } from './controllers/product-controller';
 import { LgpdLogController } from './controllers/lgpd-log-controller';
+import { UserController } from './controllers/user-controller';
 import { ListLgpdLogsUseCase } from '../../application/use-cases/lgpd/list-lgpd-logs-use-case';
 import { SequelizeScheduleRepository } from '../database/repositories/sequelize-schedule-repository';
 import { SequelizeAppointmentRepository } from '../database/repositories/sequelize-appointment-repository';
@@ -210,6 +213,7 @@ const completeOnboardingUseCase = new CompleteOnboardingUseCase(
 );
 const logoutUseCase = new LogoutUseCase(sessionService);
 const getCurrentUserUseCase = new GetCurrentUserUseCase(userRepository);
+const changePasswordUseCase = new ChangePasswordUseCase(userRepository, hashProvider);
 
 // Use Cases - Company
 const createCompanyUseCase = new CreateCompanyUseCase(companyRepository);
@@ -354,6 +358,7 @@ export const authController = new AuthController(
   completeOnboardingUseCase,
   logoutUseCase,
   getCurrentUserUseCase,
+  changePasswordUseCase,
 );
 
 export const companyController = new CompanyController(
@@ -418,6 +423,10 @@ export const productController = new ProductController(
 // LGPD
 const listLgpdLogsUseCase = new ListLgpdLogsUseCase();
 export const lgpdLogController = new LgpdLogController(listLgpdLogsUseCase);
+
+// User
+const updateUserUseCase = new UpdateUserUseCase(userRepository);
+export const userController = new UserController(updateUserUseCase);
 
 // Use Cases - Schedule
 const createScheduleUseCase = new CreateScheduleUseCase(

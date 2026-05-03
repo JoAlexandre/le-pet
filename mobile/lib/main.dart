@@ -8,6 +8,7 @@ import 'core/domain/services/permission_service.dart';
 import 'core/infrastructure/services/navigation_service.dart';
 import 'core/presentation/routes/app_routes.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
+import 'features/profile/presentation/providers/profile_provider.dart';
 import 'shared/themes/app_theme.dart';
 
 void main() async {
@@ -35,6 +36,10 @@ class LePetApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<AuthProvider>(
           create: (_) => di.sl<AuthProvider>(),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, ProfileProvider>(
+          create: (_) => di.sl<ProfileProvider>(),
+          update: (_, authProvider, previous) => previous!,
         ),
       ],
       child: MaterialApp(
