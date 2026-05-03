@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mobile/core/infrastructure/network/api_config.dart';
 import '../../../../../shared/constants/app_colors.dart';
 import '../../../../../shared/constants/app_text_styles.dart';
 

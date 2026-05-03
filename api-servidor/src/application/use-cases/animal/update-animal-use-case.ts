@@ -5,9 +5,13 @@ import { UpdateAnimalDto } from '../../dtos/update-animal-dto';
 import { AnimalResponseDto } from '../../dtos/animal-response-dto';
 import { AnimalMapper } from '../../../infrastructure/http/mappers/animal-mapper';
 import { DomainError } from '../../../shared/errors';
+import { FileStorageProvider } from '../../interfaces/file-storage-provider';
 
 export class UpdateAnimalUseCase {
-  constructor(private animalRepository: AnimalRepository) {}
+  constructor(
+    private animalRepository: AnimalRepository,
+    private fileStorageProvider: FileStorageProvider,
+  ) {}
 
   async execute(
     animalId: string,
@@ -69,7 +73,17 @@ export class UpdateAnimalUseCase {
     if (dto.microchipNumber !== undefined) {
       animal.microchipNumber = dto.microchipNumber || null;
     }
-    if (dto.photoUrl !== undefined) {
+    if (dto.photoBuffer && dto.photoMimeType) {
+      if (animal.photoUrl) {
+        await this.fileStorageProvider.delete(animal.photoUrl);
+      }
+      const uploaded = await this.fileStorageProvider.upload(
+        dto.photoBuffer,
+        dto.photoOriginalName ?? 'animal-photo',
+        dto.photoMimeType,
+      );
+      animal.photoUrl = uploaded.url;
+    } else if (dto.photoUrl !== undefined) {
       animal.photoUrl = dto.photoUrl || null;
     }
     if (dto.allergies !== undefined) {

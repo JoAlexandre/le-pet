@@ -8,8 +8,6 @@ export class AppleOAuthProvider implements OAuthProvider {
     // audience pode ser string ou array - passa os dois formatos para compatibilidade
     const clientId = config.apple.clientId;
 
-    console.dir(clientId)
-
     let payload: Awaited<ReturnType<typeof appleSignin.verifyIdToken>>;
     try {
       payload = await appleSignin.verifyIdToken(idToken, {

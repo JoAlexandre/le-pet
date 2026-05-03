@@ -9,6 +9,7 @@ import '../widgets/role_bottom_navigation.dart';
 import 'tutor_home_page.dart';
 import 'company_home_page.dart';
 import 'professional_home_page.dart';
+import 'servicos_page.dart';
 
 class HomeShellPage extends StatefulWidget {
   const HomeShellPage({super.key});
@@ -33,9 +34,14 @@ class _HomeShellPageState extends State<HomeShellPage> {
         homePage = const TutorHomePage();
     }
 
+    // Para o tutor, a segunda aba e "Servicos" (clinicas e empresas)
+    final Widget servicosTab = role == UserRole.tutor
+        ? const ServicosPage()
+        : const _PlaceholderTab(label: 'Em breve');
+
     return [
       homePage,
-      const _PlaceholderTab(label: 'Em breve'),
+      servicosTab,
       const _PlaceholderTab(label: 'Em breve'),
       const _PlaceholderTab(label: 'Em breve'),
       const ProfilePage(),

@@ -65,6 +65,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - assets/images/mascot/
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

@@ -7,8 +7,11 @@ import 'injection_container.dart' as di;
 import 'core/domain/services/permission_service.dart';
 import 'core/infrastructure/services/navigation_service.dart';
 import 'core/presentation/routes/app_routes.dart';
+import 'features/animal/presentation/providers/animal_provider.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/profile/presentation/providers/profile_provider.dart';
+import 'features/vaccine/presentation/providers/vaccine_provider.dart';
+import 'features/company/presentation/providers/company_provider.dart';
 import 'shared/themes/app_theme.dart';
 
 void main() async {
@@ -40,6 +43,15 @@ class LePetApp extends StatelessWidget {
         ChangeNotifierProxyProvider<AuthProvider, ProfileProvider>(
           create: (_) => di.sl<ProfileProvider>(),
           update: (_, authProvider, previous) => previous!,
+        ),
+        ChangeNotifierProvider<AnimalProvider>(
+          create: (_) => di.sl<AnimalProvider>(),
+        ),
+        ChangeNotifierProvider<VaccineProvider>(
+          create: (_) => di.sl<VaccineProvider>(),
+        ),
+        ChangeNotifierProvider<CompanyProvider>(
+          create: (_) => di.sl<CompanyProvider>(),
         ),
       ],
       child: MaterialApp(

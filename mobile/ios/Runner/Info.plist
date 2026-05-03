@@ -68,6 +68,12 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSCameraUsageDescription</key>
+		<string>O LePet precisa acessar sua camera para adicionar fotos dos seus pets.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>O LePet precisa acessar sua galeria para selecionar fotos dos seus pets.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>O LePet precisa salvar fotos na sua galeria.</string>
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>

@@ -8,6 +8,9 @@ export interface CreateAnimalDto {
   color?: string;
   microchipNumber?: string;
   photoUrl?: string;
+  photoBuffer?: Buffer;
+  photoMimeType?: string;
+  photoOriginalName?: string;
   allergies?: string;
   notes?: string;
 }

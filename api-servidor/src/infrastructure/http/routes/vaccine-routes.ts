@@ -63,7 +63,7 @@ const vaccineRouter = Router();
 
 /**
  * @openapi
- * /animals/{animalId}/vaccines:
+ * /vaccines/animals/{animalId}:
  *   post:
  *     tags:
  *       - Vaccines
@@ -147,7 +147,7 @@ const vaccineRouter = Router();
  *         description: Animal not found
  */
 vaccineRouter.post(
-  '/animals/:animalId/vaccines',
+  '/vaccines/animals/:animalId',
   authMiddleware,
   roleMiddleware('PROFESSIONAL'),
   crmvMiddleware,
@@ -160,7 +160,7 @@ vaccineRouter.post(
 
 /**
  * @openapi
- * /animals/{animalId}/vaccines:
+ * /vaccines/animals/{animalId}:
  *   get:
  *     tags:
  *       - Vaccines
@@ -206,7 +206,7 @@ vaccineRouter.post(
  *         description: Animal not found
  */
 vaccineRouter.get(
-  '/animals/:animalId/vaccines',
+  '/vaccines/animals/:animalId',
   authMiddleware,
   roleMiddleware('TUTOR', 'PROFESSIONAL'),
   (req, res, next) => vaccineController.listByAnimal(req, res, next),

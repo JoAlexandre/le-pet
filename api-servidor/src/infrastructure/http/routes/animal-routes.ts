@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { animalController } from '../dependencies';
 import { authMiddleware } from '../middlewares/auth-middleware';
 import { roleMiddleware } from '../middlewares/role-middleware';
+import { uploadAnimalPhoto } from '../middlewares/upload-middleware';
 
 const animalRouter = Router();
 
@@ -174,7 +175,7 @@ const animalRouter = Router();
  *       403:
  *         description: Access denied - insufficient permissions or animal limit exceeded
  */
-animalRouter.post('/animals', authMiddleware, roleMiddleware('TUTOR'), (req, res, next) =>
+animalRouter.post('/animals', authMiddleware, roleMiddleware('TUTOR'), uploadAnimalPhoto, (req, res, next) =>
   animalController.create(req, res, next),
 );
 
@@ -329,7 +330,7 @@ animalRouter.get('/animals/:id', authMiddleware, roleMiddleware('TUTOR'), (req, 
  *       404:
  *         description: Animal not found
  */
-animalRouter.put('/animals/:id', authMiddleware, roleMiddleware('TUTOR'), (req, res, next) =>
+animalRouter.put('/animals/:id', authMiddleware, roleMiddleware('TUTOR'), uploadAnimalPhoto, (req, res, next) =>
   animalController.update(req, res, next),
 );
 
@@ -366,6 +367,64 @@ animalRouter.put('/animals/:id', authMiddleware, roleMiddleware('TUTOR'), (req, 
  */
 animalRouter.delete('/animals/:id', authMiddleware, roleMiddleware('TUTOR'), (req, res, next) =>
   animalController.delete(req, res, next),
+);
+
+/**
+ * @openapi
+ * /animals/{id}/photo:
+ *   post:
+ *     tags:
+ *       - Animals
+ *     summary: Upload or replace animal photo
+ *     description: >
+ *       Uploads a photo for the animal, replacing any existing photo.
+ *       Accepts multipart/form-data with a single image file in the `photo` field.
+ *       Only the tutor who owns the animal can update its photo.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Animal ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - photo
+ *             properties:
+ *               photo:
+ *                 type: string
+ *                 format: binary
+ *                 description: Image file (jpeg or png, max 10MB)
+ *     responses:
+ *       200:
+ *         description: Photo updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AnimalResponse'
+ *       400:
+ *         description: No file provided or invalid file type/size
+ *       401:
+ *         description: Missing or invalid authorization
+ *       403:
+ *         description: Access denied - not the owner
+ *       404:
+ *         description: Animal not found
+ */
+animalRouter.post(
+  '/animals/:id/photo',
+  authMiddleware,
+  roleMiddleware('TUTOR'),
+  uploadAnimalPhoto,
+  (req, res, next) => animalController.uploadPhoto(req, res, next),
 );
 
 export { animalRouter };

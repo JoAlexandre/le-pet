@@ -245,10 +245,10 @@ const associateCompanyUseCase = new AssociateCompanyUseCase(
 );
 
 // Use Cases - Animal
-const createAnimalUseCase = new CreateAnimalUseCase(animalRepository, quotaService);
+const createAnimalUseCase = new CreateAnimalUseCase(animalRepository, quotaService, fileStorageProvider);
 const getAnimalUseCase = new GetAnimalUseCase(animalRepository);
 const listAnimalsUseCase = new ListAnimalsUseCase(animalRepository);
-const updateAnimalUseCase = new UpdateAnimalUseCase(animalRepository);
+const updateAnimalUseCase = new UpdateAnimalUseCase(animalRepository, fileStorageProvider);
 const deleteAnimalUseCase = new DeleteAnimalUseCase(animalRepository);
 
 // Use Cases - Vaccine

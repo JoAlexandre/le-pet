@@ -19,10 +19,17 @@ export class AnimalController {
 
   async create(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
+      const dto = req.body as CreateAnimalDto;
+      const file = req.file;
+      if (file) {
+        dto.photoBuffer = file.buffer;
+        dto.photoMimeType = file.mimetype;
+        dto.photoOriginalName = file.originalname;
+      }
       const result = await this.createAnimalUseCase.execute(
         req.user!.sub,
         req.user!.role!,
-        req.body as CreateAnimalDto,
+        dto,
       );
       res.status(201).json(result);
     } catch (error) {
@@ -55,10 +62,17 @@ export class AnimalController {
 
   async update(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
+      const dto = req.body as UpdateAnimalDto;
+      const file = req.file;
+      if (file) {
+        dto.photoBuffer = file.buffer;
+        dto.photoMimeType = file.mimetype;
+        dto.photoOriginalName = file.originalname;
+      }
       const result = await this.updateAnimalUseCase.execute(
         req.params.id as string,
         req.user!.sub,
-        req.body as UpdateAnimalDto,
+        dto,
       );
       res.status(200).json(result);
     } catch (error) {
@@ -70,6 +84,28 @@ export class AnimalController {
     try {
       await this.deleteAnimalUseCase.execute(req.params.id as string, req.user!.sub);
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async uploadPhoto(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const file = req.file;
+      if (!file) {
+        res.status(400).json({ error: 'BadRequest', message: 'No photo file provided' });
+        return;
+      }
+      const result = await this.updateAnimalUseCase.execute(
+        req.params.id as string,
+        req.user!.sub,
+        {
+          photoBuffer: file.buffer,
+          photoMimeType: file.mimetype,
+          photoOriginalName: file.originalname,
+        },
+      );
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }

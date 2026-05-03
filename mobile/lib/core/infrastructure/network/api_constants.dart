@@ -15,7 +15,7 @@ class ApiConstants {
   static const String users = '/users';
 
   // Animals
-  static const String animals = '/pets';
+  static const String animals = '/animals';
 
   // Vaccines
   static const String vaccines = '/vaccines';
@@ -24,7 +24,7 @@ class ApiConstants {
   static const String appointments = '/appointments';
 
   // Clinics
-  static const String clinics = '/clinics';
+  static const String clinics = '/companies';
 
   // Notifications
   static const String notifications = '/notifications';

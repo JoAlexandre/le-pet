@@ -29,7 +29,7 @@ class DatabaseProvider {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
       onConfigure: _onConfigure,
@@ -44,11 +44,80 @@ class DatabaseProvider {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    // Migrations serao adicionadas conforme features forem criadas
+    await _createAnimalsTable(db);
+    await _createVaccineRecordsTable(db);
+    await _createCompaniesTable(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Migrations incrementais serao adicionadas aqui
+    if (oldVersion < 2) {
+      await _createAnimalsTable(db);
+    }
+    if (oldVersion < 3) {
+      await _createVaccineRecordsTable(db);
+    }
+    if (oldVersion < 4) {
+      await _createCompaniesTable(db);
+    }
+  }
+
+  Future<void> _createAnimalsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS animals (
+        id TEXT PRIMARY KEY,
+        tutorId TEXT NOT NULL,
+        name TEXT NOT NULL,
+        species TEXT NOT NULL,
+        breed TEXT,
+        gender TEXT NOT NULL,
+        birthDate TEXT,
+        weight REAL,
+        color TEXT,
+        microchipNumber TEXT,
+        photoUrl TEXT,
+        allergies TEXT,
+        notes TEXT,
+        isActive INTEGER NOT NULL DEFAULT 1,
+        createdAt TEXT
+      )
+    ''');
+  }
+
+  Future<void> _createVaccineRecordsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS vaccine_records (
+        id TEXT PRIMARY KEY,
+        animalId TEXT NOT NULL,
+        professionalId TEXT,
+        vaccineName TEXT NOT NULL,
+        vaccineManufacturer TEXT,
+        batchNumber TEXT,
+        applicationDate TEXT NOT NULL,
+        nextDoseDate TEXT,
+        notes TEXT,
+        createdAt TEXT
+      )
+    ''');
+  }
+
+  Future<void> _createCompaniesTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS companies (
+        id TEXT PRIMARY KEY,
+        userId TEXT NOT NULL,
+        tradeName TEXT NOT NULL,
+        legalName TEXT,
+        cnpj TEXT,
+        phone TEXT NOT NULL,
+        address TEXT NOT NULL,
+        city TEXT NOT NULL,
+        state TEXT NOT NULL,
+        description TEXT,
+        logoUrl TEXT,
+        isActive INTEGER NOT NULL DEFAULT 1,
+        createdAt TEXT
+      )
+    ''');
   }
 
   Future<void> clearAll() async {

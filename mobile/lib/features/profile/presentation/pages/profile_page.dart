@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../core/domain/enums/user_role.dart';
 import '../../../../../core/presentation/routes/app_routes.dart';
+import '../../../../../features/animal/presentation/providers/animal_provider.dart';
 import '../../../../../features/auth/presentation/providers/auth_provider.dart';
+import '../../../../../features/company/presentation/pages/my_company_page.dart';
+import '../../../../../features/company/presentation/providers/company_provider.dart';
 import '../../../../../shared/constants/app_colors.dart';
 import '../../../../../shared/constants/app_text_styles.dart';
 import '../widgets/feature_quick_access_card.dart';
@@ -22,6 +25,10 @@ class ProfilePage extends StatelessWidget {
     final user = authProvider.user;
     final role = user?.role ?? UserRole.tutor;
     final isLoading = authProvider.isLoading;
+    final animalProvider = context.watch<AnimalProvider>();
+    final pets = animalProvider.animals
+        .map((a) => PetAvatarItem(name: a.name, photoUrl: a.photoUrl))
+        .toList();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -38,12 +45,17 @@ class ProfilePage extends StatelessWidget {
                     onSettingsTap: () {},
                   ),
             const SizedBox(height: 24),
+            if (role == UserRole.company) ...[
+              _buildCompanySection(context),
+              const SizedBox(height: 8),
+            ],
             if (role == UserRole.tutor) ...[
               PetAvatarRowWidget(
-                // Lista vazia ate fase de animais ser implementada
-                pets: const [],
-                onManageTap: () {},
-                onAddPetTap: () {},
+                pets: pets,
+                onManageTap: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.animals),
+                onAddPetTap: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.animalCreate),
               ),
               const SizedBox(height: 24),
               _buildFeatureCards(context),
@@ -140,6 +152,29 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  Widget _buildCompanySection(BuildContext context) {
+    return ProfileSectionWidget(
+      title: 'Minha Empresa',
+      children: [
+        ProfileMenuItemWidget(
+          icon: MdiIcons.hospitalBuilding,
+          iconBackgroundColor: AppColors.primary,
+          title: 'Gerenciar Empresa',
+          subtitle: 'Perfil, produtos, servicos e agenda',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ChangeNotifierProvider.value(
+                value: context.read<CompanyProvider>(),
+                child: const MyCompanyPage(),
+              ),
+            ),
+          ),
+          showDivider: false,
+        ),
+      ],
+    );
+  }
+
   Widget _buildFeatureCards(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -165,10 +200,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildAccountSection(
-    BuildContext context,
-    UserRole role,
-  ) {
+  Widget _buildAccountSection(BuildContext context, UserRole role) {
     return ProfileSectionWidget(
       title: 'Conta',
       children: [

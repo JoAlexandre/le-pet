@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../shared/widgets/pet_loading_overlay.dart';
 
 class NavigationService {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -25,23 +26,14 @@ class NavigationService {
   void showLoadingDialog(String message) {
     final context = navigatorKey.currentContext;
     if (context != null) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          content: Row(
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(width: 16),
-              Expanded(child: Text(message)),
-            ],
-          ),
-        ),
-      );
+      PetLoadingOverlay.show(context, message: message);
     }
   }
 
   void closeLoadingDialog() {
-    navigator?.pop();
+    final context = navigatorKey.currentContext;
+    if (context != null) {
+      PetLoadingOverlay.hide(context);
+    }
   }
 }

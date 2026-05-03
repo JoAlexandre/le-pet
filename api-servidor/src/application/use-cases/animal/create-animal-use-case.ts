@@ -8,11 +8,13 @@ import { AnimalResponseDto } from '../../dtos/animal-response-dto';
 import { AnimalMapper } from '../../../infrastructure/http/mappers/animal-mapper';
 import { DomainError } from '../../../shared/errors';
 import { QuotaService } from '../../../domain/services/quota-service';
+import { FileStorageProvider } from '../../interfaces/file-storage-provider';
 
 export class CreateAnimalUseCase {
   constructor(
     private animalRepository: AnimalRepository,
     private quotaService: QuotaService,
+    private fileStorageProvider: FileStorageProvider,
   ) {}
 
   async execute(
@@ -46,6 +48,17 @@ export class CreateAnimalUseCase {
       }
     }
 
+    let photoUrl: string | null = dto.photoUrl || null;
+
+    if (dto.photoBuffer && dto.photoMimeType) {
+      const uploaded = await this.fileStorageProvider.upload(
+        dto.photoBuffer,
+        dto.photoOriginalName ?? 'animal-photo',
+        dto.photoMimeType,
+      );
+      photoUrl = uploaded.url;
+    }
+
     const animal = new Animal({
       tutorId,
       name: dto.name,
@@ -56,7 +69,7 @@ export class CreateAnimalUseCase {
       weight: dto.weight ?? null,
       color: dto.color || null,
       microchipNumber: dto.microchipNumber || null,
-      photoUrl: dto.photoUrl || null,
+      photoUrl,
       allergies: dto.allergies || null,
       notes: dto.notes || null,
     });

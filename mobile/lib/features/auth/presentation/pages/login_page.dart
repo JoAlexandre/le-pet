@@ -6,6 +6,7 @@ import '../../../../core/presentation/routes/app_routes.dart';
 import '../../../../shared/constants/app_colors.dart';
 import '../../../../shared/constants/app_text_styles.dart';
 import '../../../../shared/utils/validators.dart';
+import '../../../../shared/widgets/pet_loading_overlay.dart';
 import '../providers/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
+    PetLoadingOverlay.show(context, message: 'Entrando...');
     final authProvider = context.read<AuthProvider>();
     final success = await authProvider.login(
       _emailController.text.trim(),
@@ -38,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (!mounted) return;
+    PetLoadingOverlay.hide(context);
 
     if (success) {
       _navigateAfterAuth(authProvider);
@@ -45,10 +48,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleGoogleLogin() async {
+    PetLoadingOverlay.show(context, message: 'Conectando com Google...');
     final authProvider = context.read<AuthProvider>();
     final success = await authProvider.loginWithGoogle();
 
     if (!mounted) return;
+    PetLoadingOverlay.hide(context);
 
     if (success) {
       _navigateAfterAuth(authProvider);
@@ -56,10 +61,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleAppleLogin() async {
+    PetLoadingOverlay.show(context, message: 'Conectando com Apple...');
     final authProvider = context.read<AuthProvider>();
     final success = await authProvider.loginWithApple();
 
     if (!mounted) return;
+    PetLoadingOverlay.hide(context);
 
     if (success) {
       _navigateAfterAuth(authProvider);
@@ -228,18 +235,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 elevation: 0,
               ),
-              child: authProvider.isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.textLight,
-                        ),
-                      ),
-                    )
-                  : const Text('Entrar', style: AppTextStyles.button),
+              child: const Text('Entrar', style: AppTextStyles.button),
             ),
           ),
         ],
@@ -337,26 +333,17 @@ class _SocialLoginButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        child: isLoading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(textColor),
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, size: 24, color: textColor),
-                  const SizedBox(width: 12),
-                  Text(
-                    label,
-                    style: AppTextStyles.labelLarge.copyWith(color: textColor),
-                  ),
-                ],
-              ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 24, color: textColor),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: AppTextStyles.labelLarge.copyWith(color: textColor),
+            ),
+          ],
+        ),
       ),
     );
   }

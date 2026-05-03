@@ -78,4 +78,39 @@ export function uploadLostAnimalMedia(req: Request, res: Response, next: NextFun
   });
 }
 
+export function uploadAnimalPhoto(req: Request, res: Response, next: NextFunction): void {
+  const singleUpload = multer({
+    storage,
+    limits: { fileSize: IMAGE_MAX_SIZE, files: 1 },
+    fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+      if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+        cb(
+          new DomainError(
+            `Invalid file type: ${file.mimetype}. Allowed: ${ALLOWED_IMAGE_TYPES.join(', ')}`,
+            400,
+          ),
+        );
+        return;
+      }
+      cb(null, true);
+    },
+  }).single('photo');
+
+  singleUpload(req, res, (err: unknown) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        next(new DomainError('Image too large. Maximum size is 10MB', 400));
+        return;
+      }
+      next(new DomainError(err.message, 400));
+      return;
+    }
+    if (err) {
+      next(err);
+      return;
+    }
+    next();
+  });
+}
+
 export { ALLOWED_IMAGE_TYPES, ALLOWED_VIDEO_TYPES };

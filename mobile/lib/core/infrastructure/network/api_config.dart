@@ -5,6 +5,7 @@ class ApiConfig {
   static const String baseUrlProd = 'https://lepet-api.codji.com.br/api';
   static const String baseUrlDev = 'http://192.168.1.110:3001/api';
   static const String baseUrl = baseUrlDev;
+  static const String domain = 'http://192.168.1.110:3001';
 
   /// Versao da API
   static const String apiVersion = 'v1';

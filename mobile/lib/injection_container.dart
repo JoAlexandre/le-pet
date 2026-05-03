@@ -12,6 +12,42 @@ import 'core/infrastructure/http/dio_client.dart';
 import 'core/infrastructure/network/network_info.dart';
 import 'core/infrastructure/network/network_info_impl.dart';
 import 'core/infrastructure/services/navigation_service.dart';
+import 'features/animal/data/datasources/animal_local_datasource.dart';
+import 'features/animal/data/datasources/animal_local_datasource_impl.dart';
+import 'features/animal/data/datasources/animal_remote_datasource.dart';
+import 'features/animal/data/datasources/animal_remote_datasource_impl.dart';
+import 'features/animal/data/repositories/animal_repository_impl.dart';
+import 'features/animal/domain/repositories/animal_repository.dart';
+import 'features/animal/domain/usecases/create_animal_usecase.dart';
+import 'features/animal/domain/usecases/delete_animal_usecase.dart';
+import 'features/animal/domain/usecases/get_animal_usecase.dart';
+import 'features/animal/domain/usecases/list_animals_usecase.dart';
+import 'features/animal/domain/usecases/update_animal_usecase.dart';
+import 'features/animal/domain/usecases/upload_animal_photo_usecase.dart';
+import 'features/animal/presentation/providers/animal_provider.dart';
+import 'features/vaccine/data/datasources/vaccine_local_datasource.dart';
+import 'features/vaccine/data/datasources/vaccine_local_datasource_impl.dart';
+import 'features/vaccine/data/datasources/vaccine_remote_datasource.dart';
+import 'features/vaccine/data/datasources/vaccine_remote_datasource_impl.dart';
+import 'features/vaccine/data/repositories/vaccine_repository_impl.dart';
+import 'features/vaccine/domain/repositories/vaccine_repository.dart';
+import 'features/vaccine/domain/usecases/list_vaccines_by_animal_usecase.dart';
+import 'features/vaccine/domain/usecases/get_vaccine_usecase.dart';
+import 'features/vaccine/domain/usecases/register_vaccine_usecase.dart';
+import 'features/vaccine/domain/usecases/update_vaccine_usecase.dart';
+import 'features/vaccine/domain/usecases/delete_vaccine_usecase.dart';
+import 'features/vaccine/presentation/providers/vaccine_provider.dart';
+import 'features/company/data/datasources/company_local_datasource.dart';
+import 'features/company/data/datasources/company_local_datasource_impl.dart';
+import 'features/company/data/datasources/company_remote_datasource.dart';
+import 'features/company/data/datasources/company_remote_datasource_impl.dart';
+import 'features/company/data/repositories/company_repository_impl.dart';
+import 'features/company/domain/repositories/company_repository.dart';
+import 'features/company/domain/usecases/list_companies_usecase.dart';
+import 'features/company/domain/usecases/get_company_usecase.dart';
+import 'features/company/domain/usecases/create_company_usecase.dart';
+import 'features/company/domain/usecases/update_company_usecase.dart';
+import 'features/company/presentation/providers/company_provider.dart';
 import 'features/auth/data/datasources/auth_local_datasource.dart';
 import 'features/auth/data/datasources/auth_local_datasource_impl.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
@@ -82,6 +118,30 @@ Future<void> init() async {
     () => ProfileRemoteDatasourceImpl(dio: sl<Dio>()),
   );
 
+  // Animal
+  sl.registerLazySingleton<AnimalRemoteDatasource>(
+    () => AnimalRemoteDatasourceImpl(dio: sl<Dio>()),
+  );
+  sl.registerLazySingleton<AnimalLocalDatasource>(
+    () => AnimalLocalDatasourceImpl(databaseProvider: sl()),
+  );
+
+  // Vaccine
+  sl.registerLazySingleton<VaccineRemoteDatasource>(
+    () => VaccineRemoteDatasourceImpl(dio: sl<Dio>()),
+  );
+  sl.registerLazySingleton<VaccineLocalDatasource>(
+    () => VaccineLocalDatasourceImpl(databaseProvider: sl()),
+  );
+
+  // Company
+  sl.registerLazySingleton<CompanyRemoteDatasource>(
+    () => CompanyRemoteDatasourceImpl(dio: sl<Dio>()),
+  );
+  sl.registerLazySingleton<CompanyLocalDatasource>(
+    () => CompanyLocalDatasourceImpl(databaseProvider: sl()),
+  );
+
   // ============================================
   //  4. REPOSITORIES
   // ============================================
@@ -113,6 +173,33 @@ Future<void> init() async {
     ),
   );
 
+  // Animal
+  sl.registerLazySingleton<AnimalRepository>(
+    () => AnimalRepositoryImpl(
+      remoteDatasource: sl(),
+      localDatasource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Vaccine
+  sl.registerLazySingleton<VaccineRepository>(
+    () => VaccineRepositoryImpl(
+      remoteDatasource: sl(),
+      localDatasource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Company
+  sl.registerLazySingleton<CompanyRepository>(
+    () => CompanyRepositoryImpl(
+      remoteDatasource: sl(),
+      localDatasource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
   // ============================================
   //  5. USE CASES
   // ============================================
@@ -128,6 +215,27 @@ Future<void> init() async {
   // Profile
   sl.registerLazySingleton(() => UpdateUserUseCase(sl()));
   sl.registerLazySingleton(() => ChangePasswordUseCase(sl()));
+
+  // Animal
+  sl.registerLazySingleton(() => ListAnimalsUseCase(sl()));
+  sl.registerLazySingleton(() => GetAnimalUseCase(sl()));
+  sl.registerLazySingleton(() => CreateAnimalUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateAnimalUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteAnimalUseCase(sl()));
+  sl.registerLazySingleton(() => UploadAnimalPhotoUseCase(sl()));
+
+  // Vaccine
+  sl.registerLazySingleton(() => ListVaccinesByAnimalUseCase(sl()));
+  sl.registerLazySingleton(() => GetVaccineUseCase(sl()));
+  sl.registerLazySingleton(() => RegisterVaccineUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateVaccineUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteVaccineUseCase(sl()));
+
+  // Company
+  sl.registerLazySingleton(() => ListCompaniesUseCase(sl()));
+  sl.registerLazySingleton(() => GetCompanyUseCase(sl()));
+  sl.registerLazySingleton(() => CreateCompanyUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateCompanyUseCase(sl()));
 
   // ============================================
   //  6. PROVIDERS
@@ -147,6 +255,43 @@ Future<void> init() async {
 
   // Profile
   sl.registerFactory(
-    () => ProfileProvider(updateUserUseCase: sl(), changePasswordUseCase: sl(), authProvider: sl()),
+    () => ProfileProvider(
+      updateUserUseCase: sl(),
+      changePasswordUseCase: sl(),
+      authProvider: sl(),
+    ),
+  );
+
+  // Animal
+  sl.registerFactory(
+    () => AnimalProvider(
+      listAnimalsUseCase: sl(),
+      getAnimalUseCase: sl(),
+      createAnimalUseCase: sl(),
+      updateAnimalUseCase: sl(),
+      deleteAnimalUseCase: sl(),
+      uploadAnimalPhotoUseCase: sl(),
+    ),
+  );
+
+  // Vaccine
+  sl.registerFactory(
+    () => VaccineProvider(
+      listVaccinesByAnimalUseCase: sl(),
+      getVaccineUseCase: sl(),
+      registerVaccineUseCase: sl(),
+      updateVaccineUseCase: sl(),
+      deleteVaccineUseCase: sl(),
+    ),
+  );
+
+  // Company
+  sl.registerFactory(
+    () => CompanyProvider(
+      listCompaniesUseCase: sl(),
+      getCompanyUseCase: sl(),
+      createCompanyUseCase: sl(),
+      updateCompanyUseCase: sl(),
+    ),
   );
 }

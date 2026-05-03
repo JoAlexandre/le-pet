@@ -4,7 +4,8 @@ import { logger } from '../../../shared/logger';
 
 export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction): void {
   if (err instanceof DomainError) {
-    logger.info('Unhandled error', err);
+    const level = err.statusCode >= 500 ? 'error' : 'warn';
+    logger[level](`${err.name}: ${err.message}`, { statusCode: err.statusCode });
     res.status(err.statusCode).json({
       error: err.name,
       message: err.message,
@@ -12,7 +13,7 @@ export function errorHandler(err: Error, _req: Request, res: Response, _next: Ne
     return;
   }
 
-  logger.info('Unhandled error', err);
+  logger.error(`UnhandledError: ${err.message}`, { statusCode: 500, stack: err.stack });
 
   res.status(500).json({
     error: 'InternalServerError',
